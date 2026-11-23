@@ -5,3 +5,163 @@
 .inquiry-status[data-kind="success"]{color:#1b6634;font-weight:700;}
 .inquiry-status[data-kind="error"]{color:#a32e2e;font-weight:600;}
 @media(max-width:760px){.contact-grid{grid-template-columns:minmax(0,1fr)}.contact-panel{min-width:0}.contact-panel input:not([type="checkbox"]),.contact-panel select,.contact-panel textarea{width:100%;}}
+
+
+/* ========================================
+   구매 문의 접수 완료 / 상태 조회
+======================================== */
+
+.inquiry-status[data-kind="info"] {
+  color: #245a45;
+  font-weight: 600;
+}
+
+.inquiry-receipt[hidden],
+.lookup-result[hidden] {
+  display: none !important;
+}
+
+.inquiry-receipt {
+  margin-top: 24px;
+  padding: 28px 22px;
+  border: 1px solid #c9ded0;
+  border-radius: 16px;
+  background: #f4f9f5;
+  text-align: center;
+}
+
+.receipt-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: #1c6543;
+  color: white;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.inquiry-receipt h3 {
+  margin: 0 0 12px;
+  color: #174b35;
+}
+
+.inquiry-receipt p {
+  line-height: 1.7;
+}
+
+.receipt-number-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0;
+  padding: 20px 12px;
+  border: 1px solid #d6e5db;
+  border-radius: 12px;
+  background: white;
+}
+
+.receipt-number-box span {
+  color: #62776a;
+  font-size: 13px;
+}
+
+.receipt-number-box strong {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: clamp(16px, 3.5vw, 22px);
+  letter-spacing: .5px;
+  color: #163e2b;
+}
+
+.receipt-note {
+  font-size: 14px;
+}
+
+.inquiry-lookup {
+  scroll-margin-top: 100px;
+}
+
+.lookup-eyebrow {
+  color: #64816c;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.inquiry-lookup h2 {
+  margin-top: 8px;
+}
+
+.inquiry-lookup form {
+  margin-top: 20px;
+}
+
+.lookup-message {
+  margin-top: 14px;
+  color: #8b580d;
+  font-weight: 600;
+}
+
+.lookup-result {
+  margin-top: 22px;
+  padding: 22px;
+  border: 1px solid #d6e5db;
+  border-radius: 14px;
+  background: #f6faf7;
+}
+
+.lookup-result-header,
+.lookup-result-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.lookup-result-header {
+  border-bottom: 1px solid #dce9df;
+}
+
+.lookup-result-header strong {
+  color: #1c6543;
+  font-size: 17px;
+}
+
+.lookup-result-row span {
+  color: #64776b;
+  font-size: 14px;
+}
+
+.lookup-result-row strong {
+  overflow-wrap: anywhere;
+  text-align: right;
+  font-size: 14px;
+}
+
+.lookup-help,
+.lookup-privacy {
+  margin-top: 14px;
+  color: #69776e;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+@media (max-width: 760px) {
+  .inquiry-receipt {
+    padding: 22px 14px;
+  }
+
+  .lookup-result {
+    padding: 16px;
+  }
+
+  .receipt-number-box {
+    padding: 16px 10px;
+  }
+}
