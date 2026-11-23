@@ -1,0 +1,7 @@
+/* 구매 문의 입력 폼 모바일 보완: 기존 style.css 유지 */
+.contact-panel input:not([type="checkbox"]),.contact-panel textarea,.contact-panel select{max-width:100%;font-size:16px;}
+.contact-panel textarea{resize:vertical;min-height:72px;}
+.inquiry-status[data-kind="warning"]{color:#8b580d;font-weight:600;}
+.inquiry-status[data-kind="success"]{color:#1b6634;font-weight:700;}
+.inquiry-status[data-kind="error"]{color:#a32e2e;font-weight:600;}
+@media(max-width:760px){.contact-grid{grid-template-columns:minmax(0,1fr)}.contact-panel{min-width:0}.contact-panel input:not([type="checkbox"]),.contact-panel select,.contact-panel textarea{width:100%;}}
