@@ -1,5 +1,5 @@
-// 공개 사이트 설정. GitHub에 업로드하기 전 값을 입력하세요.
+// 운영 전에 아래 값을 입력하세요. 비워두면 관련 기능은 실행되지 않습니다.
 window.FARM_CONFIG = {
-  ga4MeasurementId: "", // 예: G-XXXXXXXXXX (비워두면 분석 스크립트 미실행)
-  phone: "", // 예: 01012345678 (실제 농원 문의 번호)
+  ga4MeasurementId: "", // 예: G-XXXXXXXXXX
+  phone: "" // 예: 01012345678 (숫자만)
 };
