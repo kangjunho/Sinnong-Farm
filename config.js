@@ -1,5 +1,6 @@
-// 운영 전에 아래 값을 입력하세요. 비워두면 관련 기능은 실행되지 않습니다.
+// Google Apps Script 웹 앱 배포 후 /exec URL을 아래에 입력하세요.
 window.FARM_CONFIG = {
   ga4MeasurementId: "", // 예: G-XXXXXXXXXX
-  phone: "" // 예: 01012345678 (숫자만)
+  phone: "01067880022",
+  inquiryWebAppUrl: "" // 예: https://script.google.com/macros/s/AKfycb.../exec
 };
