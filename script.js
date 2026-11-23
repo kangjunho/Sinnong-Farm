@@ -1,48 +1,36 @@
 
-/* =====================================================
-   신농산삼약초농원 - 통합 script.js
-
-   1. 모바일 메뉴
-   2. Google Analytics GA4
-   3. 쿠키 동의
-   4. 상품 선택 및 클릭 추적
-   5. 갤러리 라이트박스
-   6. 구매 문의 Google Apps Script 연동
-   7. 버튼 클릭 즉시 전송 안내
-   8. 서버 응답 확인 및 중복 제출 방지
-===================================================== */
-
+/*
+ * 신농산삼약초농원 - 통합 script.js
+ * 모바일 메뉴 / GA4 / 갤러리 / 구매문의 / 접수상태 조회
+ */
 (() => {
   'use strict';
 
   const cfg = window.FARM_CONFIG || {};
+  const webAppUrl = cfg.inquiryWebAppUrl || '';
 
-  /* ==============================
-     1. 모바일 메뉴
-  ============================== */
-
+  // =========================================
+  // 1. 모바일 메뉴
+  // =========================================
   const menu = document.querySelector('.menu-toggle');
   const nav = document.querySelector('.nav');
 
   menu?.addEventListener('click', () => {
     if (!nav) return;
-
     const open = nav.classList.toggle('open');
     menu.setAttribute('aria-expanded', String(open));
   });
 
-
-  /* ==============================
-     2. Google Analytics GA4
-  ============================== */
-
+  // =========================================
+  // 2. Google Analytics / 쿠키 동의
+  // =========================================
   const consentKey = 'sinnong_analytics_consent';
   const banner = document.querySelector('#cookie-banner');
 
   function getConsent() {
     try {
       return localStorage.getItem(consentKey);
-    } catch (error) {
+    } catch (_) {
       return null;
     }
   }
@@ -50,71 +38,51 @@
   function setConsent(value) {
     try {
       localStorage.setItem(consentKey, value);
-    } catch (error) {
-      console.warn('[Sinnong] Consent storage unavailable');
-    }
-  }
-
-  const consent = getConsent();
-
-  if (
-    banner &&
-    /^G-[A-Z0-9]+$/.test(cfg.ga4MeasurementId || '') &&
-    consent === null
-  ) {
-    banner.hidden = false;
+    } catch (_) {}
   }
 
   let gaLoaded = false;
 
   function loadGA() {
-    if (gaLoaded) return;
-
     const id = cfg.ga4MeasurementId || '';
-
-    if (!/^G-[A-Z0-9]+$/.test(id)) return;
+    if (gaLoaded || !/^G-[A-Z0-9]+$/.test(id)) return;
 
     gaLoaded = true;
-
     window.dataLayer = window.dataLayer || [];
-
     window.gtag = function () {
       window.dataLayer.push(arguments);
     };
-
     window.gtag('js', new Date());
-
-    window.gtag('config', id, {
-      anonymize_ip: true
-    });
+    window.gtag('config', id, { anonymize_ip: true });
 
     const script = document.createElement('script');
-
     script.async = true;
     script.src =
       'https://www.googletagmanager.com/gtag/js?id=' +
       encodeURIComponent(id);
-
     document.head.appendChild(script);
   }
 
-  if (consent === 'yes') {
-    loadGA();
+  if (getConsent() === 'yes') loadGA();
+
+  if (
+    banner &&
+    /^G-[A-Z0-9]+$/.test(cfg.ga4MeasurementId || '') &&
+    getConsent() === null
+  ) {
+    banner.hidden = false;
   }
 
   document.querySelector('#cookie-accept')
     ?.addEventListener('click', () => {
       setConsent('yes');
-
       if (banner) banner.hidden = true;
-
       loadGA();
     });
 
   document.querySelector('#cookie-reject')
     ?.addEventListener('click', () => {
       setConsent('no');
-
       if (banner) banner.hidden = true;
     });
 
@@ -126,11 +94,6 @@
       window.gtag('event', name, params);
     }
   }
-
-
-  /* ==============================
-     3. 상품 클릭 추적
-  ============================== */
 
   document.querySelectorAll('[data-product]')
     .forEach(link => {
@@ -150,11 +113,9 @@
       });
     });
 
-
-  /* ==============================
-     4. 상품 선택 자동 반영
-  ============================== */
-
+  // =========================================
+  // 3. 상품 선택 자동 반영
+  // =========================================
   const choice = document.querySelector('#product-choice');
 
   if (choice) {
@@ -166,29 +127,23 @@
     }
   }
 
-
-  /* ==============================
-     5. 갤러리 라이트박스
-  ============================== */
-
+  // =========================================
+  // 4. 갤러리 라이트박스
+  // =========================================
   const tiles = [
     ...document.querySelectorAll('.gallery-item')
   ];
-
   const dlg = document.querySelector('#lightbox');
 
   if (dlg && tiles.length) {
     let current = 0;
-
     const lightboxImage =
       document.querySelector('#lightbox-image');
-
     const lightboxCaption =
       document.querySelector('#lightbox-caption');
 
     function renderGallery() {
       const img = tiles[current]?.querySelector('img');
-
       if (!img || !lightboxImage) return;
 
       lightboxImage.src = img.currentSrc || img.src;
@@ -202,349 +157,479 @@
     tiles.forEach((tile, index) => {
       tile.addEventListener('click', () => {
         current = index;
-
         renderGallery();
-
         if (!dlg.open) dlg.showModal();
       });
     });
 
     document.querySelector('#lightbox-close')
-      ?.addEventListener('click', () => {
-        dlg.close();
-      });
+      ?.addEventListener('click', () => dlg.close());
 
     document.querySelector('#lightbox-prev')
       ?.addEventListener('click', () => {
         current =
           (current - 1 + tiles.length) % tiles.length;
-
         renderGallery();
       });
 
     document.querySelector('#lightbox-next')
       ?.addEventListener('click', () => {
         current = (current + 1) % tiles.length;
-
         renderGallery();
       });
 
     dlg.addEventListener('click', event => {
-      if (event.target === dlg) {
-        dlg.close();
-      }
+      if (event.target === dlg) dlg.close();
     });
 
     dlg.addEventListener('keydown', event => {
       if (event.key === 'ArrowLeft') {
         current =
           (current - 1 + tiles.length) % tiles.length;
-
         renderGallery();
       }
-
       if (event.key === 'ArrowRight') {
         current = (current + 1) % tiles.length;
-
         renderGallery();
       }
     });
   }
 
+  // =========================================
+  // 5. Google Apps Script JSONP 조회
+  // =========================================
+  function validWebAppUrl() {
+    return /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/
+      .test(webAppUrl);
+  }
 
-  /* ==============================
-     6. 구매 문의
-  ============================== */
+  let jsonpCounter = 0;
 
+  function jsonp(params, timeout = 12000) {
+    return new Promise((resolve, reject) => {
+      if (!validWebAppUrl()) {
+        reject(new Error('웹 앱 주소가 올바르지 않습니다.'));
+        return;
+      }
+
+      const callback =
+        'sinnongCallback' + Date.now() + (++jsonpCounter);
+
+      const url = new URL(webAppUrl);
+
+      Object.entries(params).forEach(([key, value]) => {
+        url.searchParams.set(key, String(value));
+      });
+
+      url.searchParams.set('callback', callback);
+
+      const script = document.createElement('script');
+      let finished = false;
+      let timer;
+
+      function cleanup() {
+        clearTimeout(timer);
+        script.remove();
+        delete window[callback];
+      }
+
+      function finish(error, data) {
+        if (finished) return;
+        finished = true;
+        cleanup();
+
+        if (error) reject(error);
+        else resolve(data);
+      }
+
+      window[callback] = data => finish(null, data);
+
+      script.onerror = () => {
+        finish(new Error('서버 연결에 실패했습니다.'));
+      };
+
+      timer = setTimeout(() => {
+        finish(new Error('조회 시간이 초과되었습니다.'));
+      }, timeout);
+
+      script.src = url.toString();
+      document.head.appendChild(script);
+    });
+  }
+
+  function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  function normalizePhone(value) {
+    return String(value || '').replace(/\D/g, '');
+  }
+
+  // =========================================
+  // 6. 구매문의 접수
+  // =========================================
   const form = document.getElementById('inquiry-form');
-
-  if (!form) return;
-
-  const status =
-    document.getElementById('inquiry-status');
-
-  const submitBtn =
-    document.getElementById('inquiry-submit');
-
+  const status = document.getElementById('inquiry-status');
+  const submitBtn = document.getElementById('inquiry-submit');
   const frame =
     document.getElementById('inquiry-response-frame');
-
   const originInput =
     document.getElementById('inquiry-origin');
-
   const requestInput =
     document.getElementById('inquiry-request-id');
 
-  const webAppUrl = cfg.inquiryWebAppUrl || '';
+  const receiptBox =
+    document.getElementById('inquiry-receipt');
+  const receiptNumber =
+    document.getElementById('receipt-number');
+  const copyReceiptBtn =
+    document.getElementById('copy-receipt');
 
-  const defaultButtonText = submitBtn
-    ? submitBtn.textContent
-    : '구매 문의 보내기 ↗';
-
-  let pending = false;
-  let requestId = '';
-  let timeoutId = null;
+  let submitting = false;
+  let activeRequestId = '';
+  let activeFingerprint = '';
+  const defaultButtonText =
+    submitBtn?.textContent || '구매 문의 보내기';
 
   if (originInput) {
     originInput.value = location.origin;
   }
 
-  function showStatus(message, kind = '') {
+  function setStatus(message, kind = '') {
     if (!status) return;
-
     status.textContent = message;
     status.dataset.kind = kind;
   }
 
   function setSubmitting(value) {
-    pending = value;
+    submitting = value;
 
     if (submitBtn) {
       submitBtn.disabled = value;
-
       submitBtn.textContent = value
-        ? '문의 전송 중...'
+        ? '접수 확인 중...'
         : defaultButtonText;
     }
   }
 
-  function clearResponseTimeout() {
-    if (timeoutId !== null) {
-      clearTimeout(timeoutId);
-      timeoutId = null;
-    }
-  }
-
-  function finishSubmission() {
-    clearResponseTimeout();
-    setSubmitting(false);
-  }
-
-  function generateRequestId() {
-    if (
-      window.crypto &&
-      typeof window.crypto.randomUUID === 'function'
-    ) {
+  function createRequestId() {
+    if (window.crypto?.randomUUID) {
       return window.crypto.randomUUID();
     }
 
-    return (
-      Date.now() + '-' +
-      Math.random().toString(36).slice(2)
-    );
+    const bytes = new Uint8Array(16);
+    window.crypto.getRandomValues(bytes);
+
+    return [...bytes]
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
   }
 
-  function trustedOrigin(origin) {
-    return (
-      origin === 'https://script.google.com' ||
-      origin === 'https://script.googleusercontent.com' ||
-      /^https:\/\/[a-z0-9.-]+\.googleusercontent\.com$/.test(origin)
-    );
+  function fingerprintForm() {
+    if (!form) return '';
+
+    return [
+      'product',
+      'quantity',
+      'customerName',
+      'customerPhone',
+      'deliveryAddress',
+      'message'
+    ].map(name => {
+      return String(
+        form.elements.namedItem(name)?.value || ''
+      ).trim();
+    }).join('\u001f');
   }
 
+  async function verifyReceipt(requestId) {
+    // 서버 저장에 시간이 걸릴 수 있으므로 반복 확인
+    for (let attempt = 0; attempt < 8; attempt++) {
+      try {
+        const result = await jsonp({
+          action: 'receipt',
+          requestId
+        });
 
-  /* ==============================
-     7. 구매 문의 전송
-  ============================== */
+        if (
+          result?.ok === true &&
+          result?.found === true &&
+          /^SN-[A-F0-9]{16}$/.test(result.ticket || '')
+        ) {
+          return result;
+        }
+      } catch (error) {
+        console.warn(
+          '[Sinnong] 접수 확인 재시도:',
+          error.message
+        );
+      }
 
-  form.addEventListener('submit', event => {
+      if (attempt < 7) await wait(2000);
+    }
+
+    return null;
+  }
+
+  function showReceipt(result) {
+    if (receiptNumber) {
+      receiptNumber.textContent = result.ticket;
+    }
+
+    if (receiptBox) {
+      receiptBox.hidden = false;
+    }
+
+    // 조회 폼에 문의번호 자동 입력
+    const lookupTicket =
+      document.getElementById('lookup-ticket');
+
+    if (lookupTicket) {
+      lookupTicket.value = result.ticket;
+    }
+
+    setStatus(
+      '구매 문의가 정상적으로 접수되었습니다. ' +
+      '문의번호를 보관해 주세요.',
+      'success'
+    );
+
+    try {
+      localStorage.setItem(
+        'sinnong_last_ticket',
+        result.ticket
+      );
+    } catch (_) {}
+
+    track('generate_lead', {
+      method: 'online_inquiry'
+    });
+  }
+
+  copyReceiptBtn?.addEventListener('click', async () => {
+    const number = receiptNumber?.textContent || '';
+    if (!number) return;
+
+    try {
+      await navigator.clipboard.writeText(number);
+      copyReceiptBtn.textContent = '복사 완료';
+    } catch (_) {
+      copyReceiptBtn.textContent =
+        '번호를 선택해 복사해 주세요';
+    }
+  });
+
+  form?.addEventListener('submit', async event => {
     event.preventDefault();
+    if (submitting) return;
 
-    // 중복 클릭 방지
-    if (pending) return;
-
-    // Apps Script URL 확인
-    if (
-      !/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(
-        webAppUrl
-      )
-    ) {
-      showStatus(
-        '온라인 접수 준비 중입니다. 전화 또는 문자로 문의해 주세요.',
+    if (!validWebAppUrl()) {
+      setStatus(
+        '온라인 문의 연결이 준비되지 않았습니다.',
         'error'
       );
       return;
     }
 
-    // 필수 HTML 요소 확인
     if (
-      !frame ||
-      !frame.name ||
+      !frame?.name ||
       !originInput ||
       !requestInput
     ) {
-      showStatus(
-        '문의 양식에 문제가 있습니다. 전화 또는 문자로 문의해 주세요.',
-        'error'
-      );
+      setStatus('문의 양식 구성 오류입니다.', 'error');
       return;
     }
 
-    // 필수 입력값 확인
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
 
-    // 연락처 확인
-    const phoneField =
-      form.elements.namedItem('customerPhone');
-
-    const phone = String(
-      phoneField?.value || ''
-    ).replace(/\D/g, '');
+    const phone = normalizePhone(
+      form.elements.namedItem('customerPhone')?.value
+    );
 
     if (!/^0\d{8,10}$/.test(phone)) {
-      showStatus(
-        '연락처를 확인해 주세요.',
-        'error'
-      );
+      setStatus('연락처를 확인해 주세요.', 'error');
       return;
     }
 
-    // 요청 ID 생성
-    requestId = generateRequestId();
+    // 같은 내용 재시도 시 동일 ID 사용
+    // 서버에서 중복 저장을 방지할 수 있음
+    const currentFingerprint = fingerprintForm();
 
-    requestInput.value = requestId;
+    if (
+      !activeRequestId ||
+      currentFingerprint !== activeFingerprint
+    ) {
+      activeRequestId = createRequestId();
+      activeFingerprint = currentFingerprint;
+    }
+
+    requestInput.value = activeRequestId;
     originInput.value = location.origin;
 
-    // 전송 설정
     form.action = webAppUrl;
     form.method = 'POST';
     form.target = frame.name;
 
-    setSubmitting(true);
+    if (receiptBox) receiptBox.hidden = true;
 
-    // 클릭 즉시 고객에게 안내
-    showStatus(
-      '구매 문의를 전송했습니다. 접수 확인 후 연락드리겠습니다.',
+    setSubmitting(true);
+    setStatus(
+      '문의 내용을 전송하고 접수 여부를 확인하고 있습니다.',
       'info'
     );
 
-    console.info('[Sinnong] Inquiry submitted', {
-      requestId,
-      target: frame.name
-    });
+    try {
+      // 실제 POST 전송
+      HTMLFormElement.prototype.submit.call(form);
 
-    // 서버 응답 대기
-    timeoutId = setTimeout(() => {
-      if (!pending) return;
+      // iframe 응답에 의존하지 않고
+      // Google Sheets 저장 여부를 별도로 확인
+      const result = await verifyReceipt(activeRequestId);
 
-      console.warn(
-        '[Sinnong] Confirmation unavailable',
-        { requestId }
-      );
+      if (result) {
+        showReceipt(result);
 
-      finishSubmission();
+        form.reset();
+        originInput.value = location.origin;
 
-      showStatus(
-        '문의 내용을 전송했습니다. 접수 여부를 확인할 수 없는 경우 전화로 문의해 주세요. 중복 전송은 피해주세요.',
+        activeRequestId = '';
+        activeFingerprint = '';
+      } else {
+        setStatus(
+          '접수 여부를 아직 확인하지 못했습니다. ' +
+          '동일한 내용을 다시 전송하면 중복 접수를 방지합니다. ' +
+          '문의번호가 표시되지 않으면 전화로 확인해 주세요.',
+          'warning'
+        );
+      }
+    } catch (error) {
+      console.error('[Sinnong] 문의 오류:', error);
+
+      setStatus(
+        '접수 여부를 확인하지 못했습니다. ' +
+        '잠시 후 다시 확인하거나 전화로 문의해 주세요.',
         'warning'
       );
-    }, 20000);
-
-    // 실제 제출
-    try {
-      form.submit();
-    } catch (error) {
-      finishSubmission();
-
-      showStatus(
-        '문의 전송을 시작하지 못했습니다. 잠시 후 다시 시도해 주세요.',
-        'error'
-      );
-
-      console.error(
-        '[Sinnong] Submission error',
-        error
-      );
+    } finally {
+      setSubmitting(false);
     }
   });
 
+  // =========================================
+  // 7. 고객 문의 상태 조회
+  // =========================================
+  const lookupForm =
+    document.getElementById('lookup-form');
+  const lookupButton =
+    document.getElementById('lookup-submit');
+  const lookupMessage =
+    document.getElementById('lookup-message');
+  const lookupResult =
+    document.getElementById('lookup-result');
+  const lookupStatus =
+    document.getElementById('lookup-status');
+  const lookupDate =
+    document.getElementById('lookup-date');
+  const lookupNumber =
+    document.getElementById('lookup-number');
 
-  /* ==============================
-     8. Apps Script 응답 수신
-  ============================== */
+  try {
+    const lastTicket =
+      localStorage.getItem('sinnong_last_ticket');
 
-  window.addEventListener('message', event => {
-    const data = event.data;
+    const ticketInput =
+      document.getElementById('lookup-ticket');
 
-    if (
-      !pending ||
-      !data ||
-      typeof data !== 'object' ||
-      data.type !== 'sinnong-inquiry-result'
-    ) {
-      return;
+    if (lastTicket && ticketInput && !ticketInput.value) {
+      ticketInput.value = lastTicket;
     }
+  } catch (_) {}
 
-    const originOK =
-      trustedOrigin(event.origin);
+  lookupForm?.addEventListener('submit', async event => {
+    event.preventDefault();
 
-    const sourceOK =
-      !!frame &&
-      event.source === frame.contentWindow;
+    const ticket = String(
+      document.getElementById('lookup-ticket')?.value || ''
+    ).trim().toUpperCase();
 
-    const requestOK =
-      String(data.requestId || '') === requestId;
-
-    console.info(
-      '[Sinnong] Apps Script response',
-      {
-        origin: event.origin,
-        originOK,
-        sourceOK,
-        requestOK,
-        code: data.code,
-        ok: data.ok
-      }
+    const phone = normalizePhone(
+      document.getElementById('lookup-phone')?.value
     );
 
-    // 보안 및 요청 일치 확인
-    if (
-      !originOK ||
-      !sourceOK ||
-      !requestOK
-    ) {
-      console.warn(
-        '[Sinnong] Response ignored'
-      );
+    if (!/^SN-[A-F0-9]{16}$/.test(ticket)) {
+      if (lookupMessage) {
+        lookupMessage.textContent =
+          '문의번호 형식을 확인해 주세요.';
+      }
+      if (lookupResult) lookupResult.hidden = true;
       return;
     }
 
-    finishSubmission();
-
-    // 중복 접수
-    if (data.code === 'duplicate') {
-      showStatus(
-        '이미 접수된 문의입니다. 중복 전송을 방지했습니다.',
-        'warning'
-      );
+    if (!/^0\d{8,10}$/.test(phone)) {
+      if (lookupMessage) {
+        lookupMessage.textContent =
+          '연락처를 확인해 주세요.';
+      }
+      if (lookupResult) lookupResult.hidden = true;
       return;
     }
 
-    // 접수 성공
-    if (data.ok === true) {
-      showStatus(
-        '구매 문의가 정상 접수되었습니다. 확인 후 연락드리겠습니다.',
-        'success'
-      );
+    if (lookupButton) {
+      lookupButton.disabled = true;
+      lookupButton.textContent = '조회 중...';
+    }
 
-      form.reset();
-      originInput.value = location.origin;
+    if (lookupMessage) {
+      lookupMessage.textContent = '';
+    }
 
-      track('generate_lead', {
-        method: 'online_inquiry'
+    if (lookupResult) lookupResult.hidden = true;
+
+    try {
+      const result = await jsonp({
+        action: 'lookup',
+        ticket,
+        phone
       });
 
-      return;
+      if (result?.ok === true && result?.found === true) {
+        if (lookupNumber) {
+          lookupNumber.textContent = result.ticket;
+        }
+
+        if (lookupStatus) {
+          lookupStatus.textContent = result.status;
+        }
+
+        if (lookupDate) {
+          lookupDate.textContent =
+            result.receivedAt || '-';
+        }
+
+        if (lookupResult) lookupResult.hidden = false;
+      } else {
+        if (lookupMessage) {
+          lookupMessage.textContent =
+            '일치하는 문의 내역이 없습니다. ' +
+            '문의번호와 연락처를 확인해 주세요.';
+        }
+      }
+    } catch (error) {
+      console.error('[Sinnong] 상태 조회 오류:', error);
+
+      if (lookupMessage) {
+        lookupMessage.textContent =
+          '조회 서버에 연결하지 못했습니다. ' +
+          '잠시 후 다시 시도해 주세요.';
+      }
+    } finally {
+      if (lookupButton) {
+        lookupButton.disabled = false;
+        lookupButton.textContent = '문의 상태 조회';
+      }
     }
-
-    // 접수 실패
-    showStatus(
-      '문의 접수에 실패했습니다. 전화 또는 문자로 문의해 주세요.',
-      'error'
-    );
   });
-
 })();
