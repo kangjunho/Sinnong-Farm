@@ -1,15 +1,12 @@
-# 신농산삼약초농원 홈페이지 v3
+# 신농산삼약초농원 홈페이지 v4
 
-GitHub Pages용 정적 다중 페이지 홈페이지.
+GitHub Pages 정적 다중 페이지 홈페이지. `index.html` 및 `assets/`를 포함한 **폴더 안의 전체 파일**을 저장소 루트에 업로드하세요.
 
-## 업로드
-압축을 해제한 뒤 **이 폴더 안의 파일과 assets 폴더를 저장소 최상위**에 업로드하세요. `index.html`이 루트에 있어야 합니다. GitHub Settings → Pages → Deploy from a branch → main / (root).
+- 메인: 실제 봄 농장 풍경, 이전 메인 문구, 상품 카드, 생산자 소개
+- 독립 페이지: `about.html`, `products.html`, `gallery.html`, `story.html`, `media.html`, `contact.html`
+- 사진: `assets/`에 포함된 실제 촬영본. 연근별 상품 사진으로 오인하지 않도록 표시
+- 설정: `config.js`에 연락처와 GA4 측정 ID 입력 (미입력 시 비활성)
+- GitHub Pages: Settings → Pages → Deploy from branch → main / (root)
+- 주의: GitHub Pages는 결제·주문 DB를 제공하지 않습니다. 가격 및 재고는 문의 방식입니다.
 
-## 설정
-`config.js`에서 `phone`(농원 연락처)과 `ga4MeasurementId`(GA4 측정 ID)를 설정하세요. GA4는 동의한 방문자에게만 로드됩니다. 통계와 이벤트는 배포 후 GA4에서 테스트하세요.
-
-## 사진
-`assets/`에 실제 농장 사진 9장 포함. 상품 카드에는 **연근별 상품 사진이 아닌 공통 참고 사진**을 사용합니다. 여름·겨울 실제 사진은 미확보로 표시합니다.
-
-## 유의사항
-상품 가격, 수량, 배송 조건, 사업자·통신판매 관련 표시는 운영 전에 확인해 추가하세요. 연락처를 넣기 전에는 전화·문자 버튼이 비활성화됩니다.
+실제 여름/겨울 촬영본은 확보되지 않아 사계절 페이지에서 준비 중으로 표시됩니다.
