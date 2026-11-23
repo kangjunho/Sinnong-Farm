@@ -144,6 +144,69 @@
   font-size: 14px;
 }
 
+<!-- 문의번호 찾기 -->
+<div class="contact-divider"></div>
+
+<section class="ticket-finder">
+  <h3>문의번호를 잊으셨나요?</h3>
+
+  <p>
+    문의 시 입력한 성함과 연락처로
+    최근 구매 문의번호를 확인할 수 있습니다.
+  </p>
+
+  <form id="find-ticket-form" novalidate>
+    <label for="find-customer-name">
+      고객명
+    </label>
+    <input
+      id="find-customer-name"
+      type="text"
+      maxlength="50"
+      autocomplete="name"
+      placeholder="문의 시 입력한 성함"
+      required
+    >
+
+    <label for="find-customer-phone">
+      연락처
+    </label>
+    <input
+      id="find-customer-phone"
+      type="tel"
+      maxlength="25"
+      autocomplete="tel"
+      placeholder="010-0000-0000"
+      required
+    >
+
+    <button
+      type="submit"
+      id="find-ticket-submit"
+      class="btn dark"
+    >
+      문의번호 찾기
+    </button>
+  </form>
+
+  <p
+    id="find-ticket-message"
+    class="lookup-message"
+    role="status"
+    aria-live="polite"
+  ></p>
+
+  <div
+    id="find-ticket-results"
+    class="ticket-results"
+    hidden
+  >
+    <h4>조회된 문의 내역</h4>
+    <div id="find-ticket-list"></div>
+  </div>
+</section>
+
+
 .lookup-help,
 .lookup-privacy {
   margin-top: 14px;
