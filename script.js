@@ -632,4 +632,116 @@
       }
     }
   });
+  // =========================================
+  // 8. 고객명 + 연락처로 문의번호 찾기
+  // =========================================
+
+  const findForm =
+    document.getElementById('find-ticket-form');
+
+  const findButton =
+    document.getElementById('find-ticket-submit');
+
+  const findMessage =
+    document.getElementById('find-ticket-message');
+
+  const findResults =
+    document.getElementById('find-ticket-results');
+
+  const findList =
+    document.getElementById('find-ticket-list');
+
+  findForm?.addEventListener('submit', async event => {
+    event.preventDefault();
+
+    const name = String(
+      document.getElementById('find-customer-name')?.value || ''
+    ).trim();
+
+    const phone = normalizePhone(
+      document.getElementById('find-customer-phone')?.value
+    );
+
+    if (name.length < 2 || !/^0\d{8,10}$/.test(phone)) {
+      findMessage.textContent =
+        '고객명과 연락처를 확인해 주세요.';
+      return;
+    }
+
+    findButton.disabled = true;
+    findButton.textContent = '조회 중...';
+    findMessage.textContent = '';
+    findResults.hidden = true;
+    findList.replaceChildren();
+
+    try {
+      const result = await jsonp({
+        action: 'findTickets',
+        name,
+        phone
+      });
+
+      if (
+        result?.ok === true &&
+        result?.found === true &&
+        Array.isArray(result.tickets)
+      ) {
+        result.tickets.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'ticket-found-card';
+
+          const number = document.createElement('strong');
+          number.textContent = item.ticket;
+
+          const date = document.createElement('p');
+          date.textContent =
+            '접수일: ' + (item.receivedAt || '-');
+
+          const state = document.createElement('p');
+          state.textContent =
+            '처리 상태: ' + (item.status || '-');
+
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'btn outline-dark';
+          button.textContent = '이 문의 조회하기';
+
+          button.addEventListener('click', () => {
+            document.getElementById('lookup-ticket').value =
+              item.ticket;
+
+            document.getElementById('lookup-phone').value =
+              phone;
+
+            document.getElementById('lookup-section')
+              .scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+
+            document.getElementById('lookup-submit').click();
+          });
+
+          card.append(number, date, state, button);
+          findList.appendChild(card);
+        });
+
+        findResults.hidden = false;
+        findMessage.textContent =
+          '최근 문의 내역을 찾았습니다.';
+      } else {
+        findMessage.textContent =
+          '일치하는 문의 내역이 없습니다. ' +
+          '고객명과 연락처를 확인해 주세요.';
+      }
+    } catch (error) {
+      console.error('[Sinnong] 문의번호 찾기 오류:', error);
+      findMessage.textContent =
+        '조회 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.';
+    } finally {
+      findButton.disabled = false;
+      findButton.textContent = '문의번호 찾기';
+    }
+  });
+
 })();
