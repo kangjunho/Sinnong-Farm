@@ -35,3 +35,24 @@ window.FARM_CONFIG = {
   else window.addEventListener('load', syncNavigation, {once:true});
   document.addEventListener('DOMContentLoaded', syncNavigation, {once:true});
 })();
+// Product reference photographs; actual plant ages are not verified.
+(() => {
+  const photos = {
+    '3~4년근': ['ginseng-seedlings.webp','어린 산양삼 참고 사진'],
+    '5~6년근': ['ginseng-young-plants.webp','산양삼 생육 참고 사진'],
+    '7~8년근': ['ginseng-raindrops.webp','빗방울 맺힌 산양삼 참고 사진'],
+    '9~10년근': ['ginseng-red-berries.webp','붉은 열매가 달린 산양삼 참고 사진'],
+    '11년근 이상': ['ginseng-gift-box.webp','수확 및 포장된 산양삼 참고 사진']
+  };
+  function updatePhotos() {
+    document.querySelectorAll('#panel-products .product-card').forEach(card => {
+      const key = card.querySelector('[data-product]')?.dataset.product;
+      const img = card.querySelector('.product-photo img');
+      if (!img || !photos[key]) return;
+      img.src = 'assets/' + photos[key][0];
+      img.alt = photos[key][1];
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', updatePhotos, {once:true});
+  else updatePhotos();
+})();
