@@ -1,0 +1,1 @@
+(()=>{document.querySelectorAll('.nav').forEach(nav=>{if(nav.querySelector('a[href="experience.html"]'))return;const a=document.createElement('a');a.href='experience.html';a.textContent='농원 체험';const p=nav.querySelector('a[href="products.html"]');if(p)p.after(a);else nav.append(a)});})();
