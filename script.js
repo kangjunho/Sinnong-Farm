@@ -744,4 +744,24 @@
     }
   });
 
+/* =========================================
+   공통 홈페이지 레이아웃 연결
+========================================= */
+
+(() => {
+  'use strict';
+
+  if (document.getElementById('sinnong-site-layout')) {
+    return;
+  }
+
+  const layout = document.createElement('script');
+
+  layout.id = 'sinnong-site-layout';
+  layout.src = 'site-layout.js?v=20261124';
+
+  document.head.appendChild(layout);
+
+})();
+
 })();
