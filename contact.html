@@ -3,23 +3,17 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#122f25">
-  <meta
-    name="description"
-    content="경남 함양 지리산 마적대 신농산삼약초농원. 산양삼 구매 문의 및 접수 상태 확인."
-  >
+  <meta name="description" content="경남 함양 지리산 마적대 신농산삼약초농원. 산양삼 구매 문의 및 접수 상태 확인.">
 
   <title>구매문의 | 신농산삼약초농원</title>
 
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="contact-fixes.css">
+  <link rel="stylesheet" href="contact-fixes.css?v=20261124">
 
   <script defer src="config.js"></script>
-  <script defer src="script.js"></script>
+  <script defer src="script.js?v=20261124"></script>
 </head>
 
 <body>
@@ -52,11 +46,9 @@
         <a href="gallery.html">사계절 풍경</a>
         <a href="media.html">영상·소식</a>
         <a href="contact.html">오시는 길</a>
-        <a
-          href="contact.html"
-          class="nav-cta"
-          aria-current="page"
-        >구매문의</a>
+        <a href="contact.html" class="nav-cta" aria-current="page">
+          구매문의
+        </a>
       </nav>
 
     </div>
@@ -68,7 +60,9 @@
     <section class="page-head">
       <div class="wrap">
         <span class="eyebrow">CONTACT</span>
+
         <h1>구매 문의 · 오시는 길</h1>
+
         <p>
           산양삼 구매 문의를 남기고
           접수 상태를 직접 확인하실 수 있습니다.
@@ -111,9 +105,7 @@
               <option value="5~6년근">5~6년근</option>
               <option value="7~8년근">7~8년근</option>
               <option value="9~10년근">9~10년근</option>
-              <option value="11년근 이상">
-                11년근 이상
-              </option>
+              <option value="11년근 이상">11년근 이상</option>
             </select>
 
             <label for="inquiry-quantity">
@@ -236,12 +228,13 @@
 
           </form>
 
-          <!-- 실제 접수 확인 후 표시 -->
+          <!-- 구매 문의 접수 완료 -->
           <div
             id="inquiry-receipt"
             class="inquiry-receipt"
             hidden
           >
+
             <div class="receipt-icon">✓</div>
 
             <h3>구매 문의 접수 완료</h3>
@@ -252,11 +245,10 @@
             </p>
 
             <div class="receipt-number-box">
+
               <span>나의 문의번호</span>
 
-              <strong
-                id="receipt-number"
-              ></strong>
+              <strong id="receipt-number"></strong>
 
               <button
                 type="button"
@@ -265,6 +257,7 @@
               >
                 문의번호 복사
               </button>
+
             </div>
 
             <p class="receipt-note">
@@ -279,6 +272,7 @@
             >
               내 문의 상태 확인 ↓
             </a>
+
           </div>
 
           <!-- Google Apps Script 응답 프레임 -->
@@ -292,12 +286,15 @@
 
           <div class="contact-divider"></div>
 
-          <!-- 내 문의 확인 -->
+          <!-- ===================================
+               내 구매 문의 상태 조회
+          ==================================== -->
           <section
             id="lookup-section"
             class="inquiry-lookup"
             aria-labelledby="lookup-heading"
           >
+
             <span class="lookup-eyebrow">
               INQUIRY STATUS
             </span>
@@ -312,10 +309,7 @@
               확인할 수 있습니다.
             </p>
 
-            <form
-              id="lookup-form"
-              novalidate
-            >
+            <form id="lookup-form" novalidate>
 
               <label for="lookup-ticket">
                 문의번호
@@ -360,18 +354,16 @@
               aria-live="polite"
             ></p>
 
-            <!-- 조회 결과 -->
+            <!-- 상태 조회 결과 -->
             <div
               id="lookup-result"
               class="lookup-result"
               hidden
             >
+
               <div class="lookup-result-header">
                 <span>현재 문의 상태</span>
-
-                <strong id="lookup-status">
-                  접수 완료
-                </strong>
+                <strong id="lookup-status"></strong>
               </div>
 
               <div class="lookup-result-row">
@@ -388,12 +380,119 @@
                 처리 상태는 농원에서 확인 후
                 순차적으로 변경합니다.
               </p>
+
             </div>
+
+            <!-- 문의번호 찾기 바로가기 -->
+            <p class="finder-shortcut">
+              문의번호를 잊으셨나요?
+              <a href="#ticket-finder">
+                문의번호 찾기 ↓
+              </a>
+            </p>
 
             <p class="lookup-privacy">
               개인정보 보호를 위해 조회 화면에는
               상세 문의 내용과 배송지를 표시하지 않습니다.
             </p>
+
+          </section>
+
+          <div class="contact-divider"></div>
+
+          <!-- ===================================
+               고객명 + 연락처로 문의번호 찾기
+          ==================================== -->
+          <section
+            id="ticket-finder"
+            class="ticket-finder"
+            aria-labelledby="finder-heading"
+          >
+
+            <span class="lookup-eyebrow">
+              FIND INQUIRY NUMBER
+            </span>
+
+            <h2 id="finder-heading">
+              문의번호 찾기
+            </h2>
+
+            <p>
+              문의번호를 잊으셨다면 문의 시 입력한
+              성함과 연락처로 최근 구매 문의번호를
+              확인하실 수 있습니다.
+            </p>
+
+            <form id="find-ticket-form" novalidate>
+
+              <label for="find-customer-name">
+                고객명
+              </label>
+
+              <input
+                id="find-customer-name"
+                type="text"
+                maxlength="50"
+                autocomplete="name"
+                placeholder="문의 시 입력한 성함"
+                required
+              >
+
+              <label for="find-customer-phone">
+                문의 시 입력한 연락처
+              </label>
+
+              <input
+                id="find-customer-phone"
+                type="tel"
+                inputmode="tel"
+                maxlength="25"
+                autocomplete="tel"
+                placeholder="010-0000-0000"
+                required
+              >
+
+              <button
+                type="submit"
+                id="find-ticket-submit"
+                class="btn dark"
+              >
+                문의번호 찾기
+              </button>
+
+            </form>
+
+            <p
+              id="find-ticket-message"
+              class="lookup-message"
+              role="status"
+              aria-live="polite"
+            ></p>
+
+            <!-- 문의번호 검색 결과 -->
+            <div
+              id="find-ticket-results"
+              class="ticket-results"
+              hidden
+            >
+
+              <h4>조회된 문의 내역</h4>
+
+              <p class="lookup-help">
+                최근 문의 내역을 최대 5건까지
+                확인하실 수 있습니다.
+              </p>
+
+              <div id="find-ticket-list"></div>
+
+            </div>
+
+            <p class="lookup-privacy">
+              성함과 연락처가 모두 일치하는
+              문의 내역만 표시됩니다.
+              본인의 문의 정보만 조회해 주세요.
+            </p>
+
           </section>
 
           <div class="contact-divider"></div>
@@ -416,12 +515,16 @@
                 <a
                   class="btn dark"
                   href="tel:01067880022"
-                >전화하기</a>
+                >
+                  전화하기
+                </a>
 
                 <a
                   class="btn outline-dark"
                   href="sms:01067880022"
-                >문자하기</a>
+                >
+                  문자하기
+                </a>
               </div>
             </div>
 
@@ -433,12 +536,16 @@
                 <a
                   class="btn dark"
                   href="tel:01067407077"
-                >전화하기</a>
+                >
+                  전화하기
+                </a>
 
                 <a
                   class="btn outline-dark"
                   href="sms:01067407077"
-                >문자하기</a>
+                >
+                  문자하기
+                </a>
               </div>
             </div>
 
@@ -490,7 +597,10 @@
 
       <div>
         <strong>신농산삼약초농원</strong>
-        <p>지리산 함양 마적대 · 생산자 강재두</p>
+
+        <p>
+          지리산 함양 마적대 · 생산자 강재두
+        </p>
 
         <small>
           상품의 가격·수량·배송 조건은
@@ -499,12 +609,15 @@
       </div>
 
       <div>
+
         <a
           data-track="naver_map"
           href="https://map.naver.com/p/entry/place/1107217183"
           target="_blank"
           rel="noopener"
-        >네이버 지도</a>
+        >
+          네이버 지도
+        </a>
 
         ·
 
@@ -513,7 +626,10 @@
           href="https://www.youtube.com/@고고마적대"
           target="_blank"
           rel="noopener"
-        >고고마적대 유튜브</a>
+        >
+          고고마적대 유튜브
+        </a>
+
       </div>
 
     </div>
@@ -525,6 +641,7 @@
     id="cookie-banner"
     hidden
   >
+
     <p>
       방문 통계 분석을 위해 선택적 분석 쿠키를
       사용합니다. 동의하지 않아도 사이트를
@@ -532,16 +649,23 @@
     </p>
 
     <div>
+
       <button
         id="cookie-reject"
         type="button"
-      >거부</button>
+      >
+        거부
+      </button>
 
       <button
         id="cookie-accept"
         type="button"
-      >동의</button>
+      >
+        동의
+      </button>
+
     </div>
+
   </div>
 
 </body>
